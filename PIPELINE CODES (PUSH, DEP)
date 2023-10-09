@@ -1,0 +1,49 @@
+PUSHING:
+
+pipeline {
+    agent any 
+    
+    stages {
+        stage('checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/mohanlucky2/docker-project.git'
+            }
+        }
+        stage('build') {
+            steps {
+                sh 'docker build -t $img .'
+            }
+        }
+        stage('tag') {
+            steps {
+                sh 'docker tag $img $repo'
+            }
+        }
+        stage('push') {
+            steps {
+                sh 'docker login -u ramu478 -p 'bdnpa9009a'
+                sh 'docker push $repo'
+            }
+        }
+    }
+}
+
+
+DEPLOYMENT:
+
+pipeline {
+    agent any
+
+    stages {
+        stage('check') {
+            steps {
+                git branch: 'main', url: 'https://github.com/mohanlucky2/docker-project.git'
+            }
+        }
+        stage('stack') {
+            steps {
+                sh 'docker stack deploy -c docker-compose.yml courses'
+            }
+        }
+    }
+}
